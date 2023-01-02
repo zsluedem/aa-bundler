@@ -1,10 +1,14 @@
-on: [push]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
 
 name: CI
 
 jobs:
   build_and_test:
-    name: Rust project
+    name: Rust Abstract Account Project
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -15,6 +19,14 @@ jobs:
       - name: Setup
         run: |
           make fetch-thirdparty
+      - name: Install solc
+        run: |
+          pip3 install solc-select
+          solc-select install 0.8.12
+          solc-select use 0.8.12
+      - name: Build
+        run: |
+          cargo build
       - name: Lint
         run: |
           make lint
