@@ -5,7 +5,7 @@ pub mod types {
 
     use aa_bundler_primitives::UserOperationHash;
     use arrayref::array_ref;
-    use ethers::types::{Address, Bloom, Bytes, U256};
+    use ethers::types::{Address, Bloom, Bytes};
     use prost::bytes::Buf;
 
     tonic::include_proto!("types");
@@ -100,14 +100,14 @@ pub mod types {
         fn from(user_operation: aa_bundler_primitives::UserOperation) -> Self {
             Self {
                 sender: Some(user_operation.sender.into()),
-                nonce: user_operation.nonce.as_u64(),
+                nonce: Some(user_operation.nonce.into()),
                 init_code: prost::bytes::Bytes::copy_from_slice(user_operation.init_code.as_ref()),
                 call_data: prost::bytes::Bytes::copy_from_slice(user_operation.call_data.as_ref()),
-                call_gas_limit: user_operation.call_gas_limit.as_u64(),
-                verification_gas_limit: user_operation.verification_gas_limit.as_u64(),
-                pre_verification_gas: user_operation.pre_verification_gas.as_u64(),
-                max_fee_per_gas: user_operation.max_fee_per_gas.as_u64(),
-                max_priority_fee_per_gas: user_operation.max_priority_fee_per_gas.as_u64(),
+                call_gas_limit: Some(user_operation.call_gas_limit.into()),
+                verification_gas_limit: Some(user_operation.verification_gas_limit.into()),
+                pre_verification_gas: Some(user_operation.pre_verification_gas.into()),
+                max_fee_per_gas: Some(user_operation.max_fee_per_gas.into()),
+                max_priority_fee_per_gas: Some(user_operation.max_priority_fee_per_gas.into()),
                 paymaster_and_data: prost::bytes::Bytes::copy_from_slice(
                     user_operation.paymaster_and_data.as_ref(),
                 ),
@@ -126,14 +126,29 @@ pub mod types {
                         Address::zero()
                     }
                 },
-                nonce: U256::from(user_operation.nonce),
+                nonce: user_operation.nonce.map(|n| n.into()).unwrap_or_default(),
                 init_code: Bytes::from(user_operation.init_code),
                 call_data: Bytes::from(user_operation.call_data),
-                call_gas_limit: U256::from(user_operation.call_gas_limit),
-                verification_gas_limit: U256::from(user_operation.verification_gas_limit),
-                pre_verification_gas: U256::from(user_operation.pre_verification_gas),
-                max_fee_per_gas: U256::from(user_operation.max_fee_per_gas),
-                max_priority_fee_per_gas: U256::from(user_operation.max_priority_fee_per_gas),
+                call_gas_limit: user_operation
+                    .call_gas_limit
+                    .map(|n| n.into())
+                    .unwrap_or_default(),
+                verification_gas_limit: user_operation
+                    .verification_gas_limit
+                    .map(|n| n.into())
+                    .unwrap_or_default(),
+                pre_verification_gas: user_operation
+                    .pre_verification_gas
+                    .map(|n| n.into())
+                    .unwrap_or_default(),
+                max_fee_per_gas: user_operation
+                    .max_fee_per_gas
+                    .map(|n| n.into())
+                    .unwrap_or_default(),
+                max_priority_fee_per_gas: user_operation
+                    .max_priority_fee_per_gas
+                    .map(|n| n.into())
+                    .unwrap_or_default(),
                 paymaster_and_data: Bytes::from(user_operation.paymaster_and_data),
                 signature: Bytes::from(user_operation.signature),
             }
