@@ -1,5 +1,7 @@
 on:
   pull_request:
+    types:
+      - closed
   push:
     tags:
       - "*"
@@ -29,13 +31,17 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Get Git Tag
+        run: echo "tags=$(git describe --tags)" >> $GITHUB_OUTPUT
+        id: tag
+
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=semver
+            type=semver,pattern={{version}}
           labels: org.opencontainers.image.source=https://github.com/${{ env.IMAGE_NAME }}
 
       - name: Build and push Docker image
@@ -43,5 +49,5 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: ${{ steps.tag.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
