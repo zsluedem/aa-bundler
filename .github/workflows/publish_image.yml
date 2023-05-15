@@ -33,8 +33,10 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Get Git Tag
-        run: echo "tags=$(git describe --tags)" >> $GITHUB_OUTPUT
+      - name: Get Image Tag
+        run: |
+          echo "REPO=${GITHUB_REPOSITORY,,}" >>$GITHUB_OUTPUT
+          echo "tags=$(git describe --tags)" >> $GITHUB_OUTPUT
         id: tag
 
       - name: Extract metadata (tags, labels) for Docker
@@ -49,5 +51,5 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.tag.outputs.tags }}
+          tags: ${{ env.REGISTRY }}/${{ steps.tag.outputs.REPO }}:${{ steps.tag.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
