@@ -1,5 +1,7 @@
 on:
   pull_request:
+    types:
+      - closed
   push:
     tags:
       - "*"
@@ -35,7 +37,7 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=semver
+            type=semver,pattern={{version}}
           labels: org.opencontainers.image.source=https://github.com/${{ env.IMAGE_NAME }}
 
       - name: Build and push Docker image
