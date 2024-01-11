@@ -1,5 +1,10 @@
-use super::args::{BundlerAndUoPoolArgs, BundlerArgs, CreateWalletArgs, RpcArgs, UoPoolArgs};
-use crate::bundler::{create_wallet, launch_bundler, launch_bundling, launch_rpc, launch_uopool};
+use super::args::{
+    BundlerAndUoPoolArgs, BundlerArgs, CreateWalletArgs, MetricArgs, RpcArgs, UoPoolArgs,
+};
+use crate::{
+    bundler::{create_wallet, launch_bundler, launch_bundling, launch_rpc, launch_uopool},
+    metrics::MetricsMiddleware,
+};
 use clap::Parser;
 use silius_primitives::provider::{
     create_http_block_streams, create_http_provider, create_ws_block_streams, create_ws_provider,
@@ -30,30 +35,34 @@ impl NodeCommand {
     /// Execute the command
     pub async fn execute(self) -> eyre::Result<()> {
         if self.common.eth_client_address.clone().starts_with("http") {
-            let eth_client = Arc::new(
+            let http_client =
                 create_http_provider(&self.common.eth_client_address, self.common.poll_interval)
-                    .await?,
-            );
+                    .await?;
+            let eth_client = Arc::new(MetricsMiddleware::new(http_client));
+
             let block_streams =
                 create_http_block_streams(eth_client.clone(), self.common.entry_points.len()).await;
             launch_bundler(
                 self.bundler,
                 self.uopool,
-                self.common,
+                self.common.clone(),
                 self.rpc,
+                self.common.metrics,
                 eth_client,
                 block_streams,
             )
             .await?;
         } else {
-            let eth_client = Arc::new(create_ws_provider(&self.common.eth_client_address).await?);
+            let http_client = create_ws_provider(&self.common.eth_client_address).await?;
+            let eth_client = Arc::new(MetricsMiddleware::new(http_client));
             let block_streams =
                 create_ws_block_streams(eth_client.clone(), self.common.entry_points.len()).await;
             launch_bundler(
                 self.bundler,
                 self.uopool,
-                self.common,
+                self.common.clone(),
                 self.rpc,
+                self.common.metrics,
                 eth_client,
                 block_streams,
             )
@@ -94,6 +103,7 @@ impl BundlerCommand {
                 self.common.chain,
                 self.common.entry_points,
                 self.uopool_grpc_listen_address,
+                self.common.metrics,
             )
             .await?;
         } else {
@@ -104,6 +114,7 @@ impl BundlerCommand {
                 self.common.chain,
                 self.common.entry_points,
                 self.uopool_grpc_listen_address,
+                self.common.metrics,
             )
             .await?;
         }
@@ -140,6 +151,7 @@ impl UoPoolCommand {
                 block_streams,
                 self.common.chain,
                 self.common.entry_points,
+                self.common.metrics,
             )
             .await?;
         } else {
@@ -152,6 +164,7 @@ impl UoPoolCommand {
                 block_streams,
                 self.common.chain,
                 self.common.entry_points,
+                self.common.metrics,
             )
             .await?;
         }
@@ -174,13 +187,22 @@ pub struct RpcCommand {
     /// Bundler gRPC listen address
     #[clap(long, default_value = "http://127.0.0.1:3003")]
     pub bundler_grpc_listen_address: String,
+
+    /// All metrics args
+    #[clap(flatten)]
+    metrics: MetricArgs,
 }
 
 impl RpcCommand {
     /// Execute the command
     pub async fn execute(self) -> eyre::Result<()> {
-        launch_rpc(self.rpc, self.uopool_grpc_listen_address, self.bundler_grpc_listen_address)
-            .await?;
+        launch_rpc(
+            self.rpc,
+            self.uopool_grpc_listen_address,
+            self.bundler_grpc_listen_address,
+            self.metrics,
+        )
+        .await?;
         pending().await
     }
 }

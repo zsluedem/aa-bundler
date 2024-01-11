@@ -1,6 +1,7 @@
 #![allow(dead_code)]
 
 mod bundler;
+pub mod metrics;
 mod proto;
 mod uopool;
 mod utils;

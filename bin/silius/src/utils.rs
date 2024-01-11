@@ -1,3 +1,4 @@
+use crate::metrics::LabelValue;
 use dirs::home_dir;
 use discv5::Enr;
 use ethers::types::{Address, U256};
@@ -47,6 +48,17 @@ pub fn parse_enr(enr: &str) -> Result<Enr, String> {
 pub fn parse_duration(duration: &str) -> Result<Duration, String> {
     let seconds: u64 = duration.parse().map_err(|_| format!("{duration} must be unsigned int"))?;
     Ok(Duration::from_millis(seconds))
+}
+
+pub fn parse_label_value(label_value: &str) -> Result<LabelValue, String> {
+    let mut split = label_value.split('=');
+    let label = split
+        .next()
+        .ok_or_else(|| format!("LabelValue {label_value} is not a valid label=value"))?;
+    let value = split
+        .next()
+        .ok_or_else(|| format!("LabelValue {label_value} is not a valid label=value"))?;
+    Ok(LabelValue::new(label.to_string(), value.to_string()))
 }
 
 /// Runs the future to completion or until:

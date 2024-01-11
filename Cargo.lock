@@ -1762,6 +1762,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "endian-type"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c34f04666d835ff5d62e058c3995147c06f42fe86ff053337632bca83e42702d"
+
+[[package]]
 name = "enr"
 version = "0.9.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3036,9 +3042,9 @@ checksum = "8a9ee70c43aaf417c914396645a0fa852624801b24ebb7ae78fe8272889ac888"
 
 [[package]]
 name = "hashbrown"
-version = "0.13.2"
+version = "0.13.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "43a3c133739dddd0d2990f9a4bdf8eb4b21ef50e4851ca85ab661199821d510e"
+checksum = "33ff8ae62cd3a9102e5637afc8452c55acf3844001bd5374e0b0bd7b6616c038"
 dependencies = [
  "ahash 0.8.6",
  "serde",
@@ -4453,7 +4459,7 @@ version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "71e7d46de488603ffdd5f30afbc64fbba2378214a2c3a2fb83abf3d33126df17"
 dependencies = [
- "hashbrown 0.13.2",
+ "hashbrown 0.13.1",
 ]
 
 [[package]]
@@ -4538,6 +4544,35 @@ dependencies = [
 ]
 
 [[package]]
+name = "metrics"
+version = "0.22.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "77b9e10a211c839210fd7f99954bda26e5f8e26ec686ad68da6a32df7c80e782"
+dependencies = [
+ "ahash 0.8.6",
+ "portable-atomic 1.6.0",
+]
+
+[[package]]
+name = "metrics-exporter-prometheus"
+version = "0.13.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "83a4c4718a371ddfb7806378f23617876eea8b82e5ff1324516bcd283249d9ea"
+dependencies = [
+ "base64 0.21.5",
+ "hyper",
+ "hyper-tls",
+ "indexmap 1.9.3",
+ "ipnet",
+ "metrics 0.22.0",
+ "metrics-util",
+ "quanta",
+ "thiserror",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
 name = "metrics-macros"
 version = "0.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4546,6 +4581,25 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 1.0.109",
+]
+
+[[package]]
+name = "metrics-util"
+version = "0.16.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2670b8badcc285d486261e2e9f1615b506baff91427b61bd336a472b65bbf5ed"
+dependencies = [
+ "aho-corasick",
+ "crossbeam-epoch",
+ "crossbeam-utils",
+ "hashbrown 0.13.1",
+ "indexmap 1.9.3",
+ "metrics 0.22.0",
+ "num_cpus",
+ "ordered-float",
+ "quanta",
+ "radix_trie",
+ "sketches-ddsketch",
 ]
 
 [[package]]
@@ -4758,6 +4812,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e4a24736216ec316047a1fc4252e27dabb04218aa4a3f37c6e7ddbf1f9782b54"
 
 [[package]]
+name = "nibble_vec"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "77a5d83df9f36fe23f0c3648c6bbb8b0298bb5f1939c8f2704431371f4b84d43"
+dependencies = [
+ "smallvec 1.11.2",
+]
+
+[[package]]
 name = "nix"
 version = "0.24.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4966,6 +5029,15 @@ name = "option-ext"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "04744f49eae99ab78e0d5c0b603ab218f515ea8cfe5a456d7629ad883a3b6e7d"
+
+[[package]]
+name = "ordered-float"
+version = "4.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a76df7075c7d4d01fdcb46c912dd17fba5b60c78ea480b475f2b6ab6f666584e"
+dependencies = [
+ "num-traits",
+]
 
 [[package]]
 name = "overload"
@@ -5572,6 +5644,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "quanta"
+version = "0.12.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9ca0b7bac0b97248c40bb77288fc52029cf1459c0461ea1b05ee32ccf011de2c"
+dependencies = [
+ "crossbeam-utils",
+ "libc",
+ "once_cell",
+ "raw-cpuid",
+ "wasi",
+ "web-sys",
+ "winapi",
+]
+
+[[package]]
 name = "quick-error"
 version = "1.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5663,6 +5750,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "dc33ff2d4973d518d823d61aa239014831e521c75da58e3df4840d3f47749d09"
 
 [[package]]
+name = "radix_trie"
+version = "0.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c069c179fcdc6a2fe24d8d18305cf085fdbd4f922c041943e203685d6a1c58fd"
+dependencies = [
+ "endian-type",
+ "nibble_vec",
+]
+
+[[package]]
 name = "rand"
 version = "0.4.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5727,6 +5824,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d25bf25ec5ae4a3f1b92f929810509a2f53d7dca2f50b794ff57e3face536c8f"
 dependencies = [
  "rand_core 0.6.4",
+]
+
+[[package]]
+name = "raw-cpuid"
+version = "11.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9d86a7c4638d42c44551f4791a20e687dbb4c3de1f33c43dd71e355cd429def1"
+dependencies = [
+ "bitflags 2.4.1",
 ]
 
 [[package]]
@@ -5929,7 +6035,7 @@ dependencies = [
  "bytes",
  "futures",
  "heapless",
- "metrics",
+ "metrics 0.20.1",
  "modular-bitfield",
  "page_size 0.4.2",
  "parity-scale-codec",
@@ -5984,7 +6090,7 @@ dependencies = [
  "bytes",
  "ethers-core 2.0.11",
  "futures",
- "metrics",
+ "metrics 0.20.1",
  "pin-project",
  "reth-codecs",
  "reth-ecies",
@@ -6155,7 +6261,7 @@ dependencies = [
  "derive_more",
  "enumn",
  "fixed-hash",
- "hashbrown 0.13.2",
+ "hashbrown 0.13.1",
  "hex",
  "hex-literal 0.3.4",
  "primitive-types",
@@ -6867,6 +6973,7 @@ name = "silius"
 version = "0.3.0-alpha"
 dependencies = [
  "alloy-chains",
+ "async-trait",
  "clap",
  "dirs",
  "discv5",
@@ -6874,8 +6981,12 @@ dependencies = [
  "expanded-pathbuf",
  "eyre",
  "log",
+ "metrics 0.22.0",
+ "metrics-exporter-prometheus",
+ "metrics-util",
  "parking_lot 0.12.1",
  "pin-utils",
+ "serde",
  "silius-bundler",
  "silius-contracts",
  "silius-grpc",
@@ -6883,6 +6994,7 @@ dependencies = [
  "silius-p2p",
  "silius-primitives",
  "silius-rpc",
+ "thiserror",
  "tokio",
  "tracing",
  "tracing-subscriber",
@@ -6940,7 +7052,9 @@ dependencies = [
  "expanded-pathbuf",
  "eyre",
  "futures",
+ "hyper",
  "libp2p-identity",
+ "metrics 0.22.0",
  "parking_lot 0.12.1",
  "prost",
  "prost-build",
@@ -6954,6 +7068,7 @@ dependencies = [
  "tokio",
  "tonic",
  "tonic-build",
+ "tower",
  "tracing",
 ]
 
@@ -6969,6 +7084,7 @@ dependencies = [
  "eyre",
  "futures",
  "futures-util",
+ "metrics 0.22.0",
  "page_size 0.6.0",
  "parking_lot 0.12.1",
  "prost",
@@ -7047,6 +7163,8 @@ dependencies = [
  "hyper",
  "hyper-tls",
  "jsonrpsee",
+ "metrics 0.22.0",
+ "pin-project",
  "serde",
  "serde_json",
  "silius-grpc",
@@ -7091,6 +7209,12 @@ name = "siphasher"
 version = "0.3.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "38b58827f4464d87d377d175e90bf58eb00fd8716ff0a62f80356b5e61555d0d"
+
+[[package]]
+name = "sketches-ddsketch"
+version = "0.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "68a406c1882ed7f29cd5e248c9848a80e7cb6ae0fea82346d2746f2f941c07e1"
 
 [[package]]
 name = "slab"

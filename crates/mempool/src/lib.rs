@@ -7,6 +7,7 @@ mod database;
 pub mod error;
 mod memory;
 mod mempool;
+pub mod metrics;
 mod reputation;
 mod uopool;
 mod utils;

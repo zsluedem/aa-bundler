@@ -1,4 +1,5 @@
 use crate::{
+    metrics::MetricsLayer,
     proto::{bundler::*, uopool::GetSortedRequest},
     uo_pool_client::UoPoolClient,
 };
@@ -171,6 +172,7 @@ pub fn bundler_service_run<M>(
     uopool_grpc_client: UoPoolClient<tonic::transport::Channel>,
     send_bundle_mode: SendStrategy,
     relay_endpoints: Option<Vec<String>>,
+    enable_metrics: bool,
 ) where
     M: Middleware + Clone + 'static,
 {
@@ -197,6 +199,11 @@ pub fn bundler_service_run<M>(
     tokio::spawn(async move {
         let mut builder = tonic::transport::Server::builder();
         let svc = bundler_server::BundlerServer::new(bundler_service);
-        builder.add_service(svc).serve(addr).await
+        if enable_metrics {
+            builder.layer(MetricsLayer).add_service(svc).serve(addr).await
+        } else {
+            builder.add_service(svc).serve(addr).await
+        }
+        // let route = builder.add_service(svc)
     });
 }
