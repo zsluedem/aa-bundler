@@ -102,13 +102,14 @@ where
             }
             // All other surpported networks, including Mainnet, Goerli
             _ => {
-                let accesslist = self.eth_client.create_access_list(&tx, None).await?.access_list;
-                tx.set_access_list(accesslist.clone());
                 let estimated_gas = self.eth_client.estimate_gas(&tx, None).await?;
 
                 let (max_fee_per_gas, max_priority_fee) =
                     self.eth_client.estimate_eip1559_fees(None).await?;
-
+                tx.set_gas(estimated_gas);
+                tx.set_gas_price(max_fee_per_gas);
+                let accesslist = self.eth_client.create_access_list(&tx, None).await?.access_list;
+                tx.set_access_list(accesslist.clone());
                 tx = TypedTransaction::Eip1559(Eip1559TransactionRequest {
                     to: tx.to().cloned(),
                     from: Some(self.wallet.signer.address()),
