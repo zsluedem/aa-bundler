@@ -7,6 +7,7 @@ use ethers::{
 use parking_lot::RwLock;
 use silius_primitives::{simulation::CodeHash, UserOperation, UserOperationHash};
 use std::sync::Arc;
+use tracing::warn;
 
 pub type MempoolId = H256;
 
@@ -447,7 +448,9 @@ where
 
         self.user_operations.remove_by_uo_hash(uo_hash)?;
 
-        self.user_operations_by_sender.remove_uo_hash(&sender, uo_hash)?;
+        if !self.user_operations_by_sender.remove_uo_hash(&sender, uo_hash)? {
+            warn!("user_operations_by_sender.remove_uo_hash {sender:?} {uo_hash:?} failed");
+        };
 
         if let Some(factory) = factory {
             self.user_operations_by_entity.remove_uo_hash(&factory, uo_hash)?;
